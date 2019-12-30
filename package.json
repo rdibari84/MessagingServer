@@ -1,0 +1,30 @@
+{
+  "name": "MessagingServer",
+  "version": "1.0.0",
+  "description": "Server for messaging app",
+  "main": "dist/index.js",
+  "scripts": {
+    "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
+    "build": "tsc",
+    "prestart": "npm run build",
+    "start": "node .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rdibari84/MessagingServer.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rdibari84/MessagingServer/issues"
+  },
+  "homepage": "https://github.com/rdibari84/MessagingServer#readme",
+  "devDependencies": {
+    "@types/express": "^4.17.2",
+    "@types/node": "^13.1.1",
+    "tslint": "^5.20.1",
+    "typescript": "^3.7.4"
+  }
+}
