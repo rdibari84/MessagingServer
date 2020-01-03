@@ -11,3 +11,6 @@ npm install socket.io @types/socket.io
 
 npm install @types/cors
 npm install body-parser --save
+
+docker build . -t server
+docker run --rm -p3000:3000 server
