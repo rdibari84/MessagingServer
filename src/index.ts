@@ -3,7 +3,7 @@ import cors from "cors";
 import express from "express";
 import * as httpImport from "http";
 import socketIo from "socket.io";
-import { SocketData } from "./data";
+import { Message } from "./data";
 import { User } from "./user";
 
 const app = express();
@@ -48,7 +48,6 @@ io.on("connection", (socket) => {
         clients.set(userId, socket);
         const users = [];
         for (const k of clients.keys()) {
-            console.log(k);
             users.push(k);
         }
         console.log("emitting all users", users);
@@ -62,23 +61,26 @@ io.on("connection", (socket) => {
         }
         const users = [];
         for (const k of clients.keys()) {
-            console.log(k);
             users.push(k);
         }
         console.log("emitting all users", users);
         io.emit("users", users);
     });
 
-    socket.on("message", (msg: {username: string, message: string}) => {
-        console.log("message: ", msg);
-        // const userSocket = clients.get(msg.username);
-        // userSocket.emit("message", msg.message);
-        socket.emit("message", msg.message);
+    socket.on("message", (msg: Message) => {
+        console.log("received message: ", msg);
+        const toUserSocket = clients.get(msg.toUsername);
+        console.log("toUserSocket: ", toUserSocket);
+        const fromUserSocket = clients.get(msg.fromUsername);
+        console.log("fromUserSocket: ", fromUserSocket);
+
+        console.log("sending message: ", msg);
+        toUserSocket.emit("message", msg);
+        fromUserSocket.emit("message", msg);
     });
 
     const userslist = [];
     for (const k of clients.keys()) {
-        console.log(k);
         userslist.push(k);
     }
     console.log("emitting all users", userslist);

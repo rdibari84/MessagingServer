@@ -1,5 +1,5 @@
-export class SocketData {
-    public fromUserHandle: string;
-    public toUserHandle: string;
+export class Message {
+    public fromUsername: string;
+    public toUsername: string;
     public message: string;
 }
