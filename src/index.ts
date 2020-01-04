@@ -14,6 +14,8 @@ app.set("port", process.env.PORT || 3000);
 const httpServer = new httpImport.Server(app);
 const io = socketIo(httpServer);
 const clients = new Map<string, socketIo.Socket>();
+const messages = new Map<string, Message[]>();
+const messageLimit = 10;
 
 const validUsers = [
     new User("sheepppl", "plus"),
@@ -67,16 +69,34 @@ io.on("connection", (socket) => {
         io.emit("users", users);
     });
 
+    socket.on("message-history", (msg: Message) => {
+        console.log("received message-history request: ", msg);
+        const toUserSocket = clients.get(msg.toUsername);
+        const fromUserSocket = clients.get(msg.fromUsername);
+
+        const messageList = messages.get(msg.fromUsername + "&" + msg.toUsername) ?
+            messages.get(msg.fromUsername + "&" + msg.toUsername) : [];
+
+        const messageListToSend = messageList.slice(-messageLimit);
+        console.log(`sending a list of the last ${messageLimit} messages:`, messageListToSend);
+        toUserSocket.emit("message-history", messageListToSend);
+        fromUserSocket.emit("message-history", messageListToSend);
+    });
+
     socket.on("message", (msg: Message) => {
         console.log("received message: ", msg);
         const toUserSocket = clients.get(msg.toUsername);
-        console.log("toUserSocket: ", toUserSocket);
         const fromUserSocket = clients.get(msg.fromUsername);
-        console.log("fromUserSocket: ", fromUserSocket);
 
-        console.log("sending message: ", msg);
-        toUserSocket.emit("message", msg);
-        fromUserSocket.emit("message", msg);
+        const messageList = messages.get(msg.fromUsername + "&" + msg.toUsername) ?
+            messages.get(msg.fromUsername + "&" + msg.toUsername) : [];
+        messageList.push(msg);
+        messages.set(msg.fromUsername + "&" + msg.toUsername, messageList);
+
+        const messageListToSend = messageList.slice(-messageLimit);
+        console.log(`sending a list of the last ${messageLimit} messages:`, messageListToSend);
+        toUserSocket.emit("message", messageListToSend);
+        fromUserSocket.emit("message", messageListToSend);
     });
 
     const userslist = [];

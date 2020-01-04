@@ -1,0 +1,9 @@
+version: '3'
+services:
+  server:
+    image: messaging-app-server:server
+    build: .
+    command: npm run start
+    ports:
+      - "3000:3000"
+    container_name: messaging-app-server  
