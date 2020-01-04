@@ -3,6 +3,7 @@ import cors from "cors";
 import express from "express";
 import * as httpImport from "http";
 import socketIo from "socket.io";
+import uuid from "uuid";
 import { Message } from "./data";
 import { User } from "./user";
 
@@ -14,6 +15,7 @@ app.set("port", process.env.PORT || 3000);
 const httpServer = new httpImport.Server(app);
 const io = socketIo(httpServer);
 const clients = new Map<string, socketIo.Socket>();
+const messageRoom = new Map<string, string>();
 const messages = new Map<string, Message[]>();
 const messageLimit = 10;
 
@@ -32,6 +34,17 @@ function containsUser(obj: User, list: any) {
         }
     }
     return false;
+}
+
+function determineMessageRoom(toUsername: string, fromUsername: string): string {
+    const key1 = toUsername + "&" + fromUsername;
+    const key2 = fromUsername + "&" + toUsername;
+    if (!messageRoom.get(key1) || !messageRoom.get(key2)) {
+        const roomId = uuid.v1();
+        messageRoom.set(key1, roomId);
+        messageRoom.set(key2, roomId);
+    }
+    return messageRoom.get(key1);
 }
 
 app.post("/login", (req: any, res: any) => {
@@ -74,8 +87,8 @@ io.on("connection", (socket) => {
         const toUserSocket = clients.get(msg.toUsername);
         const fromUserSocket = clients.get(msg.fromUsername);
 
-        const messageList = messages.get(msg.fromUsername + "&" + msg.toUsername) ?
-            messages.get(msg.fromUsername + "&" + msg.toUsername) : [];
+        const roomId = determineMessageRoom(msg.fromUsername, msg.toUsername);
+        const messageList = messages.get(roomId) ? messages.get(roomId) : [];
 
         const messageListToSend = messageList.slice(-messageLimit);
         console.log(`sending a list of the last ${messageLimit} messages:`, messageListToSend);
@@ -88,10 +101,12 @@ io.on("connection", (socket) => {
         const toUserSocket = clients.get(msg.toUsername);
         const fromUserSocket = clients.get(msg.fromUsername);
 
-        const messageList = messages.get(msg.fromUsername + "&" + msg.toUsername) ?
-            messages.get(msg.fromUsername + "&" + msg.toUsername) : [];
+        const roomId = determineMessageRoom(msg.fromUsername, msg.toUsername);
+
+        const messageList = messages.get(roomId) ? messages.get(roomId) : [];
         messageList.push(msg);
-        messages.set(msg.fromUsername + "&" + msg.toUsername, messageList);
+        messages.set(roomId, messageList);
+        messages.set(roomId, messageList);
 
         const messageListToSend = messageList.slice(-messageLimit);
         console.log(`sending a list of the last ${messageLimit} messages:`, messageListToSend);
