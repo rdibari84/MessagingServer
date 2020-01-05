@@ -4,18 +4,19 @@ It uses http/ socket.io for its communication with the UI.
 
 The UI is a separate project, located at `git clone https://github.com/rdibari84/MessagingClient`
 
-The Application contains a `/login` route,  
-websocket listeners for:
-- `connection`
-- `register`
-- `get-all-users`
-- `logout`
-- `message-history`
-- `message`
-websocket emitters for:
-- `get-all-users`
-- `message-history`
-- `message`
+The Application contains 
+- a `/login` route 
+- websocket listeners for:
+    - `connection`
+    - `register`
+    - `get-all-users`
+    - `logout`
+    - `message-history`
+    - `message`
+- websocket emitters for:
+    - `get-all-users`
+    - `message-history`
+    - `message`
 
 ## To Run
 PreReqs: 
