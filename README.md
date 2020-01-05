@@ -6,16 +6,16 @@ The UI is a separate project, located at `git clone https://github.com/rdibari84
 
 The Application contains a `/login` route,  
 websocket listeners for:
-`connection`
-`register`
-`get-all-users`
-`logout`
-`message-history`
-`message`
+- `connection`
+- `register`
+- `get-all-users`
+- `logout`
+- `message-history`
+- `message`
 websocket emitters for:
-`get-all-users`
-`message-history`
-`message`
+- `get-all-users`
+- `message-history`
+- `message`
 
 ## To Run
 PreReqs: 
@@ -28,9 +28,11 @@ application will start up at http://localhost:300
 `docker-compose down`
 
 ## Hard Coded Users:
+```
 username: sheepppl, password: sheepppl
 username: corgibutt, password: corgibutt
 username: nightowl, password: nightowl
+```
 
 ## Limitations
 - Users are hardcoded.
