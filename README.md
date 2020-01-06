@@ -18,18 +18,19 @@ username: corgibutt, password: corgibutt
 username: nightowl, password: nightowl
 ```
 
-## Limitations
-- Users are hardcoded.
-- This application IS NOT SCALABLE. In memory maps need to be persisted to a DB (postgres)
-- Figure out how to handle message limit; don't want to send too much data if chat history is long but hardcoding and limiting to 10 is not the solution
-
 ## Design Considerations
 - Picked typescript node/express server because it's lightwight, matches the language of the frontend (no context swtiching) and has a popular socket.io websocket library 
 - In lieu of setting up a persistence layer, three in memory maps form the crux of the application
     - clients: map username to websocket information
     - messageRoom: map toUsername and fromUsername to a messageRoomId
     - messages: map messageRoomId to a list of messages
-- A message limit is set to return the most recent x number of messages.
+- A message limit is set to return the most recent x number of messages; wanted to consider the size of chat history the to send
+
+## Limitations
+- Users are hardcoded.
+- This application IS NOT SCALABLE. In memory maps need to be persisted to a DB (postgres)
+- Figure out how to handle message limit; don't want to send too much data if chat history is long but hardcoding and limiting to 10 is not the solution
+- Unit tests need to be written
 
 ## Routes
 - REST `/login`
